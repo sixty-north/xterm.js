@@ -41,7 +41,8 @@ let pid;
 const terminalContainer = document.getElementById('terminal-container');
 const actionElements = {
   findNext: <HTMLInputElement>document.querySelector('#find-next'),
-  findPrevious: <HTMLInputElement>document.querySelector('#find-previous')
+  findPrevious: <HTMLInputElement>document.querySelector('#find-previous'),
+  highlight: <HTMLInputElement>document.querySelector('#highlight')
 };
 const paddingElement = <HTMLInputElement>document.getElementById('padding');
 
@@ -117,6 +118,14 @@ function createTerminal(): void {
         caseSensitive: (document.getElementById('case-sensitive') as HTMLInputElement).checked
       };
       term.findPrevious(actionElements.findPrevious.value, searchOptions);
+    }
+  });
+  addDomListener(actionElements.highlight, 'change', (e) => {
+    if (e.target.checked) {
+        term.highlightLines(0, 1);
+    }
+    else {
+        term.clearHighlight();
     }
   });
 

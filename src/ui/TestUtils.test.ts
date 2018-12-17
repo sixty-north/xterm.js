@@ -72,6 +72,21 @@ export class MockTerminal implements ITerminal {
   selectAll(): void {
     throw new Error('Method not implemented.');
   }
+  hasHighlight(): boolean {
+    throw new Error('Method not implemented.');
+  }
+  getHighlight(): string {
+    throw new Error('Method not implemented.');
+  }
+  clearHighlight(): void {
+    throw new Error('Method not implemented.');
+  }
+  highlightAll(): void {
+    throw new Error('Method not implemented.');
+  }
+  highlightLines(start: number, end: number): void {
+    throw new Error('Method not implemented.');
+  }
   dispose(): void {
     throw new Error('Method not implemented.');
   }
@@ -354,6 +369,7 @@ export class MockRenderer implements IRenderer {
   onBlur(): void {}
   onFocus(): void {}
   onSelectionChanged(start: [number, number], end: [number, number]): void {}
+  onHighlightChanged(start: [number, number], end: [number, number]): void {}
   onCursorMove(): void {}
   onOptionsChanged(): void {}
   onWindowResize(devicePixelRatio: number): void {}

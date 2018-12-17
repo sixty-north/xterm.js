@@ -35,6 +35,7 @@ export interface IRenderer extends IEventEmitter, IDisposable {
   onBlur(): void;
   onFocus(): void;
   onSelectionChanged(start: [number, number], end: [number, number], columnSelectMode: boolean): void;
+  onHighlightChanged(start: [number, number], end: [number, number], columnSelectMode: boolean): void;
   onCursorMove(): void;
   onOptionsChanged(): void;
   clear(): void;
@@ -100,6 +101,11 @@ export interface IRenderLayer extends IDisposable {
   onSelectionChanged(terminal: ITerminal, start: [number, number], end: [number, number], columnSelectMode: boolean): void;
 
   /**
+   * Calls when the highlight changes.
+   */
+  onHighlightChanged(terminal: ITerminal, start: [number, number], end: [number, number], columnSelectMode: boolean): void;
+
+  /**
    * Registers a handler to join characters to render as a group
    */
   registerCharacterJoiner?(joiner: ICharacterJoiner): void;
@@ -142,5 +148,6 @@ export interface IColorSet {
   cursor: IColor;
   cursorAccent: IColor;
   selection: IColor;
+  highlight: IColor;
   ansi: IColor[];
 }

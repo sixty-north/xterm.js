@@ -26,7 +26,7 @@ export class Terminal implements ITerminalApi {
   public focus(): void {
     this._core.focus();
   }
-  public on(type: 'blur' | 'focus' | 'linefeed' | 'selection', listener: () => void): void;
+  public on(type: 'blur' | 'focus' | 'linefeed' | 'selection' | 'highlight', listener: () => void): void;
   public on(type: 'data', listener: (...args: any[]) => void): void;
   public on(type: 'key', listener: (key?: string, event?: KeyboardEvent) => void): void;
   public on(type: 'keypress' | 'keydown', listener: (event?: KeyboardEvent) => void): void;
@@ -88,6 +88,21 @@ export class Terminal implements ITerminalApi {
   }
   public selectLines(start: number, end: number): void {
     this._core.selectLines(start, end);
+  }
+  public hasHighlight(): boolean {
+    return this._core.hasHighlight();
+  }
+  public getHighlight(): string {
+    return this._core.getHighlight();
+  }
+  public clearHighlight(): void {
+    this._core.clearHighlight();
+  }
+  public highlightAll(): void {
+    this._core.highlightAll();
+  }
+  public highlightLines(start: number, end: number): void {
+    this._core.highlightLines(start, end);
   }
   public dispose(): void {
     this._core.dispose();

@@ -15,6 +15,7 @@ import { RenderDebouncer } from '../ui/RenderDebouncer';
 import { ScreenDprMonitor } from '../ui/ScreenDprMonitor';
 import { ITheme } from 'xterm';
 import { CharacterJoinerRegistry } from '../renderer/CharacterJoinerRegistry';
+import { HighlightRenderLayer } from './HighlightRenderLayer';
 
 export class Renderer extends EventEmitter implements IRenderer {
   private _renderDebouncer: RenderDebouncer;
@@ -40,9 +41,10 @@ export class Renderer extends EventEmitter implements IRenderer {
 
     this._renderLayers = [
       new TextRenderLayer(this._terminal.screenElement, 0, this.colorManager.colors, this._characterJoinerRegistry, allowTransparency),
-      new SelectionRenderLayer(this._terminal.screenElement, 1, this.colorManager.colors),
-      new LinkRenderLayer(this._terminal.screenElement, 2, this.colorManager.colors, this._terminal),
-      new CursorRenderLayer(this._terminal.screenElement, 3, this.colorManager.colors)
+      new HighlightRenderLayer(this._terminal.screenElement, 1, this.colorManager.colors),
+      new SelectionRenderLayer(this._terminal.screenElement, 2, this.colorManager.colors),
+      new LinkRenderLayer(this._terminal.screenElement, 3, this.colorManager.colors, this._terminal),
+      new CursorRenderLayer(this._terminal.screenElement, 4, this.colorManager.colors)
     ];
     this.dimensions = {
       scaledCharWidth: null,
@@ -153,6 +155,10 @@ export class Renderer extends EventEmitter implements IRenderer {
 
   public onSelectionChanged(start: [number, number], end: [number, number], columnSelectMode: boolean = false): void {
     this._runOperation(l => l.onSelectionChanged(this._terminal, start, end, columnSelectMode));
+  }
+
+  public onHighlightChanged(start: [number, number], end: [number, number], columnSelectMode: boolean = false): void {
+    this._runOperation(l => l.onHighlightChanged(this._terminal, start, end, columnSelectMode));
   }
 
   public onCursorMove(): void {

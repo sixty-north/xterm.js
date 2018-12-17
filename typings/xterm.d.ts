@@ -215,6 +215,8 @@ declare module 'xterm' {
     cursorAccent?: string,
     /** The selection color (can be transparent) */
     selection?: string,
+    /** The highlight color (can be transparent) */
+    highlight?: string,
     /** ANSI black (eg. `\x1b[30m`) */
     black?: string,
     /** ANSI red (eg. `\x1b[31m`) */
@@ -375,7 +377,7 @@ declare module 'xterm' {
      * @param type The type of the event.
      * @param listener The listener.
      */
-    on(type: 'blur' | 'focus' | 'linefeed' | 'selection', listener: () => void): void;
+    on(type: 'blur' | 'focus' | 'linefeed' | 'selection' | 'highlight', listener: () => void): void;
     /**
      * Registers an event listener.
      * @param type The type of the event.
@@ -430,7 +432,7 @@ declare module 'xterm' {
      * @param type The type of the event.
      * @param listener The listener.
      */
-    off(type: 'blur' | 'focus' | 'linefeed' | 'selection' | 'data' | 'key' | 'keypress' | 'keydown' | 'refresh' | 'resize' | 'scroll' | 'title' | string, listener: (...args: any[]) => void): void;
+    off(type: 'blur' | 'focus' | 'linefeed' | 'selection' | 'highlight' | 'data' | 'key' | 'keypress' | 'keydown' | 'refresh' | 'resize' | 'scroll' | 'title' | string, listener: (...args: any[]) => void): void;
 
     /**
      * Emits an event on the terminal.
@@ -571,6 +573,34 @@ declare module 'xterm' {
      * @param end The 0-based line index to select to (inclusive).
      */
     selectLines(start: number, end: number): void;
+
+    /**
+     * Gets whether the terminal has an active highlight.
+     */
+    hasHighlight(): boolean;
+
+    /**
+     * Gets the terminal's current highlight.
+     */
+    getHighlight(): string;
+
+    /**
+     * Clears the current terminal highlight.
+     */
+    clearHighlight(): void;
+
+    /**
+     * Highlights all text within the terminal.
+     */
+    highlightAll(): void;
+
+    /**
+     * Highlights text in the buffer between 2 lines.
+     * @param start The 0-based line index to highlight from (inclusive).
+     * @param end The 0-based line index to highlight to (inclusive).
+     */
+    highlightLines(start: number, end: number): void;
+
 
     /*
      * Disposes of the terminal, detaching it from the DOM and removing any

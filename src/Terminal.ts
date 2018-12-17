@@ -52,6 +52,7 @@ import { IKeyboardEvent } from './common/Types';
 import { evaluateKeyboardEvent } from './core/input/Keyboard';
 import { KeyboardResultType, ICharset } from './core/Types';
 import { clone } from './common/Clone';
+import { HighlightManager } from './HighlightManager';
 
 // Let it work inside Node.js for automated testing purposes.
 const document = (typeof window !== 'undefined') ? window.document : null;
@@ -196,6 +197,7 @@ export class Terminal extends EventEmitter implements ITerminal, IDisposable, II
   public soundManager: SoundManager;
   public renderer: IRenderer;
   public selectionManager: SelectionManager;
+  public highlightManager: HighlightManager;
   public linkifier: ILinkifier;
   public buffers: BufferSet;
   public viewport: IViewport;
@@ -307,6 +309,7 @@ export class Terminal extends EventEmitter implements ITerminal, IDisposable, II
     // Reuse renderer if the Terminal is being recreated via a reset call.
     this.renderer = this.renderer || null;
     this.selectionManager = this.selectionManager || null;
+    this.highlightManager = this.highlightManager || null;
     this.linkifier = this.linkifier || new Linkifier(this);
     this._mouseZoneManager = this._mouseZoneManager || null;
     this.soundManager = this.soundManager || new SoundManager(this);
@@ -316,6 +319,10 @@ export class Terminal extends EventEmitter implements ITerminal, IDisposable, II
     if (this.selectionManager) {
       this.selectionManager.clearSelection();
       this.selectionManager.initBuffersListeners();
+    }
+    if (this.highlightManager) {
+      this.highlightManager.clearHighlight();
+      this.highlightManager.initBuffersListeners();
     }
   }
 
@@ -737,6 +744,24 @@ export class Terminal extends EventEmitter implements ITerminal, IDisposable, II
       this.selectionManager.refresh();
     }));
     this.register(addDisposableDomListener(this._viewportElement, 'scroll', () => this.selectionManager.refresh()));
+
+    this.highlightManager = new HighlightManager(this);
+    this.register(this.highlightManager.addDisposableListener('refresh', data => this.renderer.onHighlightChanged(data.start, data.end, data.columnSelectMode)));
+    // this.register(this.highlightManager.addDisposableListener('newhighlight', text => {
+    //   // If there's a new highlight, put it into the textarea, focus and select it
+    //   // in order to register it as a highlight on the OS. This event is fired
+    //   // only on Linux to enable middle click to paste selection.
+    //   this.textarea.value = text;
+    //   this.textarea.focus();
+    //   this.textarea.select();
+    // }));
+
+    this.register(this.addDisposableListener('scroll', () => {
+      this.viewport.syncScrollArea();
+      this.highlightManager.refresh();
+    }));
+    this.register(addDisposableDomListener(this._viewportElement, 'scroll', () => this.highlightManager.refresh()));
+
 
     this.mouseHelper = new MouseHelper(this.renderer);
 
@@ -1502,6 +1527,49 @@ export class Terminal extends EventEmitter implements ITerminal, IDisposable, II
       this.selectionManager.selectLines(start, end);
     }
   }
+
+
+
+  /**
+   * Gets whether the terminal has an active highlight.
+   */
+  public hasHighlight(): boolean {
+    return this.highlightManager ? this.highlightManager.hasHighlight : false;
+  }
+
+  /**
+   * Gets the terminal's current highlight, this is useful for implementing copy
+   * behavior outside of xterm.js.
+   */
+  public getHighlight(): string {
+    return this.highlightManager ? this.highlightManager.highlightText : '';
+  }
+
+  /**
+   * Clears the current terminal highlight.
+   */
+  public clearHighlight(): void {
+    if (this.highlightManager) {
+      this.highlightManager.clearHighlight();
+    }
+  }
+
+  /**
+   * Highlights all text within the terminal.
+   */
+  public highlightAll(): void {
+    if (this.highlightManager) {
+      this.highlightManager.highlightAll();
+    }
+  }
+
+  public highlightLines(start: number, end: number): void {
+    if (this.highlightManager) {
+      this.highlightManager.highlightLines(start, end);
+    }
+  }
+
+
 
   /**
    * Handle a keydown event

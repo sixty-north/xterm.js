@@ -304,6 +304,9 @@ export class DomRenderer extends EventEmitter implements IRenderer {
     return element;
   }
 
+  public onHighlightChanged(start: [number, number], end: [number, number], columnSelectMode: boolean): void {
+  }
+
   public onCursorMove(): void {
     // No-op, the cursor is drawn when rows are drawn
   }

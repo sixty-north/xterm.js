@@ -3,7 +3,12 @@
  * @license MIT
  */
 
-import { Terminal as PublicTerminal, ITerminalOptions as IPublicTerminalOptions, IEventEmitter, IDisposable } from 'xterm';
+import {
+  IDisposable,
+  IEventEmitter,
+  ITerminalOptions as IPublicTerminalOptions,
+  Terminal as PublicTerminal
+} from 'xterm';
 import { IColorSet, IRenderer } from './renderer/Types';
 import { IMouseZoneManager } from './ui/Types';
 import { ICharset } from './core/Types';
@@ -321,6 +326,16 @@ export interface ISelectionManager {
   selectWordAtCursor(event: MouseEvent): void;
 }
 
+export interface IHighlightManager {
+  highlightText: string;
+  highlightStart: [number, number];
+  highlightEnd: [number, number];
+
+  disable(): void;
+  enable(): void;
+  setHighlight(row: number, col: number, length: number): void;
+}
+
 export interface ILinkifier extends IEventEmitter {
   attachToDom(mouseZoneManager: IMouseZoneManager): void;
   linkifyRows(start: number, end: number): void;
@@ -530,4 +545,12 @@ export interface IBufferLine {
 
 export interface IBufferLineConstructor {
   new(cols: number, fillCharData?: CharData, isWrapped?: boolean): IBufferLine;
+}
+
+/**
+ * Represents a position of a word on a line.
+ */
+export interface IWordPosition {
+  start: number;
+  length: number;
 }
