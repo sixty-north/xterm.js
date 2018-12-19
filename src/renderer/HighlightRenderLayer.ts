@@ -55,6 +55,7 @@ export class HighlightRenderLayer extends BaseRenderLayer {
 
     // Highlight does not exist
     if (!start || !end) {
+      this._clearState();
       return;
     }
 
